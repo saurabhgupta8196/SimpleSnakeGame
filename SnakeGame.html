@@ -1,0 +1,77 @@
+<canvas id="gc" width="400" height="400">
+</canvas>
+<script>
+    window.onload = function(){
+        canv = document.getElementById("gc");
+        ctx = canv.getContext("2d"); // For graphics context
+        document.addEventListener("keydown", keyPush); // For keyboard keys press function
+        setInterval(game, 1000/15); // To call game function 15 times a second
+    }
+    xv=yv=0; // Velocity of snake in 2D
+    px=py=10; // Position of player at middle or any other place
+    gs=tc=20; // Grid Size and Tile Count
+    ax=ay=15; // Apple or anything that snake is going to eat
+    trail=[];
+    tail = 5; // Tail length
+    function game(){
+        px += xv;
+        py += yv;
+        if(px<0){
+            px = tc-1;
+        }
+        if(px>tc-1){
+            px = 0;
+        }
+        if(py<0){
+            py = tc-1;
+        }
+        if(py>tc-1){
+            py = 0;
+        }
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canv.width, canv.height);
+
+        ctx.fillStyle = "lime";
+        // Trails of the snake for shifting to other side of window
+        for(var i=0; i<trail.length; i++){
+            ctx.fillRect(trail[i].x*gs, trail[i].y*gs, gs-2, gs-2);
+
+            // Touches his tail then back to its original length
+            if(trail[i].x == px && trail[i].y == py){
+                tail = 5;
+            }
+        }
+        trail.push({x:px,y:py});
+        while(trail.length > tail){
+            trail.shift();
+        }
+        
+        // When eats the apple increase the size and randomly place the apple anywhere
+        if(ax == px && ay == py){
+            tail++;
+            ax = Math.floor(Math.random()*tc);
+            ay = Math.floor(Math.random()*tc);
+        }
+
+        // Red apple in the window
+        ctx.fillStyle = "red";
+        ctx.fillRect(ax*gs, ay*gs, gs-2, gs-2);
+    }
+    // Function called for 4 arrow keys in keyboard 37-left 38-down 39-right 40-top
+    function keyPush(evt){
+        switch(evt.keyCode){
+            case 37:
+                xv=-1;yv=0;
+                break;
+            case 38:
+                xv=0;yv=-1;
+                break;
+            case 39:
+                xv=1;yv=0;
+                break;
+            case 40:
+                xv=0;yv=1;
+                break;
+        }
+    }
+</script>
